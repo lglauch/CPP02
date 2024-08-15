@@ -1,5 +1,7 @@
 #include "Fixed.hpp"
 
+const int Fixed::fractionalBits = 8;
+
 Fixed::Fixed(void)
 {
     std::cout << "Default constructor called" << std::endl;
@@ -9,13 +11,13 @@ Fixed::Fixed(void)
 Fixed::Fixed(const int value)
 {
     std::cout << "Int constructor called" << std::endl;
-    fixedpoint = value;
+    fixedpoint = static_cast<int>(roundf(value * (1 << fractionalBits)));
 }
 
 Fixed::Fixed(const float value)
 {
     std::cout << "Float constructor called" << std::endl;
-    fixedpoint = value;
+    fixedpoint = static_cast<int>(roundf(value * (1 << fractionalBits)));
 }
 
 Fixed::Fixed(const Fixed &oldFixed)
@@ -41,15 +43,16 @@ Fixed::~Fixed(void)
 
 float   Fixed::toFloat(void) const
 {
-    float floatvalue;
-
-    floatvalue = static_cast<float>(fixedpoint)
+    return static_cast<float>(fixedpoint) / (1 << fractionalBits);
 }
 
 int Fixed::toInt(void) const
 {
-    int roundedvalue;
-    roundedvalue = roundf(fixedpoint);
+    return (static_cast<int>(fixedpoint) / (1 << fractionalBits));
 
-    return (roundedvalue);
+}
+
+std::ostream& operator<<(std::ostream& stream, const Fixed &oldFixed)
+{
+    return (stream << oldFixed.toFloat());
 }
